@@ -24,8 +24,8 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between py-4 px-4">
         <div className="flex items-center gap-2">
           <Star className="h-7 w-7 text-sb-primary" aria-hidden="true" />
-          <span className="text-lg md:text-2xl font-extrabold tracking-wide text-sb-primary font-sans drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">
-            STAR WARS ARCHIVES
+          <span className="text-lg md:text-2xl font-extrabold tracking-wide text-sb-primary font-sans drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] uppercase">
+            Starbase
           </span>
         </div>
 

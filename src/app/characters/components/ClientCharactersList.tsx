@@ -42,27 +42,27 @@ export default function ClientCharactersList({
 
   if (error) {
     return (
-      <main className="max-w-4xl mx-auto py-10">
+      <div className="max-w-4xl mx-auto py-10">
         <Card>
           <CardHeader>
             <CardTitle>Error Loading Characters</CardTitle>
             <CardDescription className="text-red-500">{error}</CardDescription>
           </CardHeader>
         </Card>
-      </main>
+      </div>
     );
   }
 
   if (!filteredCharacters || filteredCharacters.length === 0) {
     return (
-      <main className="max-w-4xl mx-auto py-10 text-center text-gray-500">
+      <div className="max-w-4xl mx-auto py-10 text-center text-gray-500">
         No characters found.
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="max-w-4xl mx-auto py-10">
+    <div className="max-w-4xl mx-auto py-10">
       <SearchBar
         placeholder="Search characters..."
         onSearch={setSearch}
@@ -79,6 +79,6 @@ export default function ClientCharactersList({
           </div>
         )}
       />
-    </main>
+    </div>
   );
 }

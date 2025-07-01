@@ -28,7 +28,7 @@ export default function ClientCharacterDetail({ character, error }: Props) {
 
   if (error || !character) {
     return (
-      <main className="max-w-lg mx-auto py-10">
+      <div className="max-w-lg mx-auto py-10">
         <Card>
           <CardHeader>
             <CardTitle>Error</CardTitle>
@@ -37,12 +37,12 @@ export default function ClientCharacterDetail({ character, error }: Props) {
             </CardDescription>
           </CardHeader>
         </Card>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="max-w-lg mx-auto py-10 space-y-6">
+    <div className="max-w-lg mx-auto py-10 space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>{character.name}</CardTitle>
@@ -73,6 +73,6 @@ export default function ClientCharacterDetail({ character, error }: Props) {
           <CharacterRelatedMovies filmUrls={character.films ?? []} />
         </CardContent>
       </Card>
-    </main>
+    </div>
   );
 }
