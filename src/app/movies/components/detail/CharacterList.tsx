@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Skeleton } from "@/app/components/ui/skeleton";
 import type { Character } from "@/app/types/character";
 import { getIdFromUrl } from "@/app/utils/getIdFromUrl";
+import { cn } from "@/app/lib/utils";
+import { buttonVariants } from "@/app/components/ui/button";
 
 interface CharacterListProps {
   isLoading: boolean;
@@ -25,16 +27,23 @@ export const CharacterList = ({
   }
 
   if (!characterData.length) {
-    return <div className="text-gray-400 text-sm">No characters found.</div>;
+    return (
+      <div className="text-sb-muted-foreground text-sm">
+        No characters found.
+      </div>
+    );
   }
 
   return (
-    <ul className="list-disc list-inside space-y-1">
+    <ul className="list-disc list-inside space-y-1 text-sb-light">
       {characterData.map((char) => (
         <li key={char.url}>
           <Link
             href={`/characters/${getIdFromUrl(char.url)}`}
-            className="hover:underline text-blue-700"
+            className={cn(
+              buttonVariants({ variant: "navLink" }),
+              "text-sb-primary"
+            )}
           >
             {char.name}
           </Link>

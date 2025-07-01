@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { cn } from "./lib/utils";
+import EdgeAccents from "./components/EdgeAccents";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,9 +24,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
@@ -33,14 +34,15 @@ export default function RootLayout({
           "flex flex-col min-h-screen",
           geistSans.variable,
           geistMono.variable,
-          "antialiased",
-          "bg-sb-background text-sb-foreground"
+          "antialiased bg-sb-background text-sb-foreground"
         )}
       >
         <Header />
-        <main className="flex-grow px-4 md:px-10 mx-auto w-full max-w-7xl my-10">
-          {children}
+        <EdgeAccents />
+        <main className="relative flex-grow px-4 md:px-10 mx-auto w-full max-w-7xl my-10 md:my-20">
+          <div className="relative z-10">{children}</div>
         </main>
+
         <Footer />
         <Toaster />
       </body>

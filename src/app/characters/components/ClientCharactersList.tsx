@@ -12,6 +12,7 @@ import {
 import CharacterCard from "./detail/CharacterCard";
 import SearchBar from "@/app/components/SearchBar";
 import { useCharactersStore } from "@/app/store/characters-store";
+import { Skeleton } from "@/app/components/ui/skeleton";
 
 type Props = {
   characters?: Character[];
@@ -27,27 +28,22 @@ export default function ClientCharactersList({
   const [search, setSearch] = useState("");
   const { characters: storeChars, setCharacters } = useCharactersStore();
 
-  // Populate store once on mount
   useEffect(() => {
     if (characters && characters.length > 0) {
       setCharacters(characters);
     }
   }, [characters, setCharacters]);
 
-  // Convert store object to array
   const allChars = useMemo(() => Object.values(storeChars || {}), [storeChars]);
 
-  // Filter by search (only triggers when trimmed search ≥ 3 chars)
   const filteredCharacters = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (term.length < 3) return allChars;
     return allChars.filter((c) => c.name.toLowerCase().includes(term));
   }, [allChars, search]);
 
-  // Determine loading state to avoid flash of "No results"
   const isLoading = !!characters && allChars.length === 0 && !error;
 
-  // Always render SearchBar, then handle states
   return (
     <div className="flex flex-col items-center space-y-6 w-full">
       <SearchBar
@@ -58,18 +54,33 @@ export default function ClientCharactersList({
       />
 
       {error ? (
-        <Card>
+        <Card className="border-sb-primary bg-sb-background border-2">
           <CardHeader>
-            <CardTitle>Error Loading Characters</CardTitle>
-            <CardDescription className="text-red-500">{error}</CardDescription>
+            <CardTitle className="text-sb-accent">
+              Error Loading Characters
+            </CardTitle>
+            <CardDescription className="text-sb-accent">
+              {error}
+            </CardDescription>
           </CardHeader>
         </Card>
       ) : isLoading ? (
-        <div className="mx-auto text-center text-gray-500">
-          Loading characters…
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          {Array.from({ length: itemsPerPage }).map((_, i) => (
+            <div
+              key={i}
+              className="border-sb-primary border-2 bg-sb-background rounded-xl overflow-hidden"
+            >
+              <Skeleton className="w-full h-64 bg-sb-muted" />
+              <div className="p-4 space-y-2">
+                <Skeleton className="h-6 w-3/4 bg-sb-muted" />
+                <Skeleton className="h-10 w-full bg-sb-muted" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredCharacters.length === 0 ? (
-        <div className="mx-auto text-center text-gray-500">
+        <div className="mx-auto text-center text-sb-muted-foreground">
           No characters found.
         </div>
       ) : (

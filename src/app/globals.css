@@ -47,6 +47,8 @@
   --color-sb-accent-foreground: #111827; /* Tailwind gray-900 */
   --color-sb-muted: #1f2937; /* Tailwind gray-800 */
   --color-sb-muted-foreground: #facc15; /* Tailwind yellow-400 */
+  --color-sb-background: #000000; /* Tailwind black-900 */
+  --color-sb-light: #ffffff; /* Tailwind white-100 */
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

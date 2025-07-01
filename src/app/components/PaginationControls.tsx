@@ -76,7 +76,7 @@ export default function PaginationControls<T>({
   return (
     <>
       {renderPage(paginated)}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-8 text-white">
         <Pagination>
           <PaginationContent>
             <PaginationItem>

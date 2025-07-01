@@ -58,6 +58,7 @@ const PaginationLink = React.forwardRef<HTMLAnchorElement, PaginationLinkProps>(
           size,
         }),
         disabled && "pointer-events-none opacity-50",
+        isActive && "text-black",
         className
       )}
       {...props}

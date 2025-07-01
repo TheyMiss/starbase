@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { useMoviesStore } from "@/app/store/movies-store";
 import { getIdFromUrl } from "@/app/utils/getIdFromUrl";
-import { Button } from "@/app/components/ui/button";
+import { buttonVariants } from "@/app/components/ui/button";
 import Link from "next/link";
+import { cn } from "@/app/lib/utils";
+import { Skeleton } from "@/app/components/ui/skeleton";
 
 type Props = {
   filmUrls: string[];
@@ -32,42 +34,53 @@ export default function CharacterRelatedMovies({ filmUrls }: Props) {
   }, [filmUrls]);
 
   if (!filmUrls || filmUrls.length === 0) {
-    return <div className="text-gray-400">No movies found</div>;
+    return <div className="text-sb-muted-foreground">No movies found</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-sb-accent">{error}</div>;
   }
 
   return (
-    <div>
-      <strong>Movies:</strong>
-      {isLoading && <div className="text-gray-500">Loading movies…</div>}
+    <div className="mt-2">
+      <strong className="text-sb-accent text-xl">Movies:</strong>
       <ul className="mt-2 space-y-1">
-        {movieIds.map((id) => {
-          const movie = moviesById[id];
-          if (!movie)
-            return (
-              <li key={id} className="text-gray-400">
-                Loading...
-              </li>
-            );
-          return (
-            <li key={id}>
-              <Link href={`/movies/${id}`} passHref>
-                <Button
-                  variant="link"
-                  className="p-0 h-auto text-base align-baseline"
-                >
-                  <span className="font-medium">{movie.title}</span>
-                </Button>
-              </Link>
-              <span className="text-xs text-gray-500 ml-2">
-                (Episode {movie.episode_id}, {movie.release_date})
-              </span>
-            </li>
-          );
-        })}
+        {isLoading || movieIds.some((id) => !moviesById[id])
+          ? (movieIds.length > 0 ? movieIds : Array.from({ length: 3 })).map(
+              (_, idx) => (
+                <li key={idx} className="flex items-center space-x-2">
+                  <Skeleton className="h-6 w-32 bg-sb-muted rounded" />
+                  <Skeleton className="h-4 w-20 bg-sb-muted rounded" />
+                </li>
+              )
+            )
+          : movieIds.map((id) => {
+              const movie = moviesById[id];
+              if (!movie)
+                return (
+                  <li key={id} className="flex items-center space-x-2">
+                    <Skeleton className="h-6 w-32 bg-sb-muted rounded" />
+                    <Skeleton className="h-4 w-20 bg-sb-muted rounded" />
+                  </li>
+                );
+              return (
+                <li key={id}>
+                  <Link
+                    className={cn(
+                      "p-0 h-auto text-base align-baseline",
+                      buttonVariants({ variant: "navLink" }),
+                      "text-sb-accent font-semibold hover:underline transition-colors"
+                    )}
+                    href={`/movies/${id}`}
+                  >
+                    {movie.title}
+                  </Link>
+                  <span className="text-xs text-sb-muted-foreground ml-2">
+                    (Episode {movie.episode_id}, {movie.release_date})
+                  </span>
+                </li>
+              );
+            })}
       </ul>
     </div>
   );
