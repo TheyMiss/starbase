@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React from "react";
+import { useRouter } from "next/navigation";
 import {
   Pagination,
   PaginationContent,
@@ -11,6 +11,7 @@ import {
   PaginationEllipsis,
   PaginationNext,
 } from "@/app/components/ui/pagination";
+import { usePagination } from "@/app/hooks/usePagination";
 
 type PaginationControlsProps<T> = {
   items: T[];
@@ -26,37 +27,17 @@ export default function PaginationControls<T>({
   queryKey = "page",
 }: PaginationControlsProps<T>) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const pageFromUrl = Number(searchParams.get(queryKey)) || 1;
-  const [currentPage, setCurrentPage] = useState(pageFromUrl);
+  const {
+    currentPage,
+    totalPages,
+    paginated,
+    buildHref,
+    handlePrev,
+    handleNext,
+  } = usePagination(items, itemsPerPage, queryKey);
 
-  useEffect(() => {
-    if (pageFromUrl !== currentPage) setCurrentPage(pageFromUrl);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageFromUrl]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.set(queryKey, String(currentPage));
-    router.replace(`?${params.toString()}`, { scroll: false });
-  }, [currentPage, queryKey, searchParams, router]);
-
-  const totalPages = useMemo(
-    () => Math.ceil(items.length / itemsPerPage),
-    [items, itemsPerPage]
-  );
-
-  const paginated = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return items.slice(start, start + itemsPerPage);
-  }, [items, currentPage, itemsPerPage]);
-
-  const handlePrev = () => setCurrentPage((p) => Math.max(p - 1, 1));
-  const handleNext = () => setCurrentPage((p) => Math.min(p + 1, totalPages));
-
-  function renderPageItems() {
-    const pages = [];
+  const renderPageItems = () => {
+    const pages: React.ReactNode[] = [];
     for (let i = 1; i <= totalPages; i++) {
       if (
         (i === 2 && currentPage > 4) ||
@@ -67,9 +48,7 @@ export default function PaginationControls<T>({
             <PaginationEllipsis />
           </PaginationItem>
         );
-        continue;
-      }
-      if (
+      } else if (
         i === 1 ||
         i === totalPages ||
         (i >= currentPage - 1 && i <= currentPage + 1)
@@ -77,10 +56,10 @@ export default function PaginationControls<T>({
         pages.push(
           <PaginationItem key={i}>
             <PaginationLink
-              href={`?${queryKey}=${i}`}
+              href={buildHref(i)}
               onClick={(e) => {
                 e.preventDefault();
-                setCurrentPage(i);
+                router.push(buildHref(i), { scroll: false });
               }}
               isActive={currentPage === i}
               aria-current={currentPage === i ? "page" : undefined}
@@ -92,17 +71,17 @@ export default function PaginationControls<T>({
       }
     }
     return pages;
-  }
+  };
 
   return (
     <>
       {renderPage(paginated)}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-8 text-white">
         <Pagination>
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={`?${queryKey}=${currentPage - 1}`}
+                href={buildHref(currentPage - 1)}
                 onClick={(e) => {
                   e.preventDefault();
                   handlePrev();
@@ -117,7 +96,7 @@ export default function PaginationControls<T>({
             {renderPageItems()}
             <PaginationItem>
               <PaginationNext
-                href={`?${queryKey}=${currentPage + 1}`}
+                href={buildHref(currentPage + 1)}
                 onClick={(e) => {
                   e.preventDefault();
                   handleNext();

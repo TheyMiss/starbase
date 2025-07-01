@@ -11,7 +11,7 @@ export default function Footer() {
       : `${START_YEAR}–${currentYear}`;
 
   return (
-    <footer className="w-full bg-black text-sb-muted-foreground py-6">
+    <footer className="w-full bg-black text-sb-muted-foreground py-6 border-t border-sb-primary">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav aria-label="Footer Navigation">
           <ul className="flex flex-wrap justify-center gap-6">

@@ -17,24 +17,31 @@ export function MovieHeader({
   producer,
   releaseDate,
 }: MovieHeaderProps) {
+  const details = [
+    { label: "Movie ID", value: episodeId },
+    { label: "Director", value: director },
+    { label: "Producer", value: producer },
+    { label: "Release Date", value: releaseDate },
+  ];
+
   return (
-    <header aria-labelledby={`movie-title-${episodeId}`} className="mb-6">
-      <h1 id={`movie-title-${episodeId}`} className="text-3xl font-bold mb-2">
+    <header
+      aria-labelledby={`movie-title-${episodeId}`}
+      className="mb-6 px-6 py-4"
+    >
+      <h1
+        id={`movie-title-${episodeId}`}
+        className="text-3xl font-bold mb-2 text-sb-light"
+      >
         {title}
       </h1>
-      <div className="text-sm text-gray-500 space-y-1">
-        <div>
-          <span className="font-semibold">Episode:</span> {episodeId}
-        </div>
-        <div>
-          <span className="font-semibold">Director:</span> {director}
-        </div>
-        <div>
-          <span className="font-semibold">Producer:</span> {producer}
-        </div>
-        <div>
-          <span className="font-semibold">Release Date:</span> {releaseDate}
-        </div>
+      <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-base text-sb-secondary-foreground">
+        {details.map(({ label, value }) => (
+          <div key={label}>
+            <span className="font-semibold text-sb-accent">{label}:</span>{" "}
+            <span className="text-sb-light">{value}</span>
+          </div>
+        ))}
       </div>
     </header>
   );

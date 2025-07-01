@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4 hover:underline hover:text-sb-primary",
         navLink:
           "relative text-base px-2 py-1 font-semibold text-gray-200 transition-all duration-300 hover:text-yellow-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[3px] after:bg-yellow-400 after:rounded-full after:transition-all after:duration-300 hover:after:w-full hover:after:shadow-[0_0_16px_2px_rgba(253,224,71,0.6)] hover:text-shadow-[0_0_12px_rgba(253,224,71,0.8)]",
       },
