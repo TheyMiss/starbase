@@ -18,9 +18,9 @@ export const CharacterList = ({
 }: CharacterListProps) => {
   if (isLoading) {
     return (
-      <div className="space-y-2" aria-busy="true">
+      <div className="space-y-3" aria-busy="true">
         {[...Array(5)].map((_, i) => (
-          <Skeleton key={i} className="h-4 w-1/3" />
+          <Skeleton key={i} className="h-9 w-40 rounded-lg bg-sb-muted" />
         ))}
       </div>
     );

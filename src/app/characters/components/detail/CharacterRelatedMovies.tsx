@@ -12,6 +12,12 @@ type Props = {
   filmUrls: string[];
 };
 
+const skeletonWidths = [
+  { title: "w-32", meta: "w-24" },
+  { title: "w-40", meta: "w-16" },
+  { title: "w-28", meta: "w-20" },
+];
+
 export default function CharacterRelatedMovies({ filmUrls }: Props) {
   const { moviesById, fetchMovieById, isLoading, error } = useMoviesStore();
   const [movieIds, setMovieIds] = useState<string[]>([]);
@@ -41,26 +47,34 @@ export default function CharacterRelatedMovies({ filmUrls }: Props) {
     return <div className="text-sb-accent">{error}</div>;
   }
 
+  const showSkeleton = isLoading || movieIds.some((id) => !moviesById[id]);
+
   return (
     <div className="mt-2">
       <strong className="text-sb-accent text-xl">Movies:</strong>
       <ul className="mt-2 space-y-1">
-        {isLoading || movieIds.some((id) => !moviesById[id])
-          ? (movieIds.length > 0 ? movieIds : Array.from({ length: 3 })).map(
-              (_, idx) => (
-                <li key={idx} className="flex items-center space-x-2">
-                  <Skeleton className="h-6 w-32 bg-sb-muted rounded" />
-                  <Skeleton className="h-4 w-20 bg-sb-muted rounded" />
-                </li>
-              )
-            )
+        {showSkeleton
+          ? (movieIds.length > 0 ? movieIds : [0, 1, 2]).map((_, idx) => (
+              <li key={idx} className="flex items-center space-x-2 py-1">
+                <Skeleton
+                  className={`h-6 rounded-md bg-sb-muted ${
+                    skeletonWidths[idx % skeletonWidths.length].title
+                  }`}
+                />
+                <Skeleton
+                  className={`h-4 rounded bg-sb-muted ${
+                    skeletonWidths[idx % skeletonWidths.length].meta
+                  }`}
+                />
+              </li>
+            ))
           : movieIds.map((id) => {
               const movie = moviesById[id];
               if (!movie)
                 return (
-                  <li key={id} className="flex items-center space-x-2">
-                    <Skeleton className="h-6 w-32 bg-sb-muted rounded" />
-                    <Skeleton className="h-4 w-20 bg-sb-muted rounded" />
+                  <li key={id} className="flex items-center space-x-2 py-1">
+                    <Skeleton className="h-6 w-32 rounded-md bg-sb-muted" />
+                    <Skeleton className="h-4 w-20 rounded bg-sb-muted" />
                   </li>
                 );
               return (
@@ -69,7 +83,7 @@ export default function CharacterRelatedMovies({ filmUrls }: Props) {
                     className={cn(
                       "p-0 h-auto text-base align-baseline",
                       buttonVariants({ variant: "navLink" }),
-                      "text-sb-accent font-semibold hover:underline transition-colors"
+                      "text-sb-accent"
                     )}
                     href={`/movies/${id}`}
                   >

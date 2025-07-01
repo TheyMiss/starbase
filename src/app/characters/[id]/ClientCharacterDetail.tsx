@@ -14,6 +14,7 @@ import { Skeleton } from "@/app/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
 import CharacterRelatedMovies from "../components/detail/CharacterRelatedMovies";
+import { CharacterDetailSkeleton } from "../components/detail/CharacterDetailSkeleton";
 
 type Props = {
   character: Character | null;
@@ -29,6 +30,10 @@ export default function ClientCharacterDetail({ character, error }: Props) {
       setCharacters([character]);
     }
   }, [character, characters, setCharacters]);
+
+  if (!character && !error) {
+    return <CharacterDetailSkeleton />;
+  }
 
   if (error || !character) {
     return (
@@ -79,7 +84,6 @@ export default function ClientCharacterDetail({ character, error }: Props) {
 
         <CardContent className="p-6 space-y-6">
           <CardHeader className="p-0">
-            {/* Character name as a link, optional */}
             <Link href={`/characters/${id}`}>
               <CardTitle className="text-3xl font-bold mb-1 text-sb-light hover:underline">
                 {character.name}

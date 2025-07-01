@@ -3,53 +3,64 @@ import { Character } from "@/app/types/character";
 
 interface CharactersState {
   characters: { [url: string]: Character };
-  loading: { [url: string]: boolean };
-  error: { [url: string]: string | null };
+  isLoading: boolean;
+  error: string | null;
+  setCharacters: (chars: Character[]) => void;
   fetchCharacter: (url: string) => Promise<Character | undefined>;
   fetchMany: (urls: string[]) => Promise<Character[]>;
   fetchList: (apiUrl: string) => Promise<Character[]>;
-  setCharacters: (chars: Character[]) => void;
 }
 
 export const useCharactersStore = create<CharactersState>((set, get) => ({
   characters: {},
-  loading: {},
-  error: {},
-  async fetchCharacter(url: string) {
-    if (get().characters[url]) return get().characters[url];
+  isLoading: true,
+  error: null,
+
+  setCharacters: (chars) => {
+    const charObj: { [url: string]: Character } = {};
+    chars.forEach((char) => {
+      if (char.url) charObj[char.url] = char;
+    });
     set((state) => ({
-      loading: { ...state.loading, [url]: true },
-      error: { ...state.error, [url]: null },
+      characters: { ...state.characters, ...charObj },
+      isLoading: false,
+      error: null,
     }));
+  },
+
+  fetchCharacter: async (url: string) => {
+    const { characters } = get();
+    if (characters[url]) return characters[url];
+    set({ isLoading: true, error: null });
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch character");
       const data = (await res.json()) as Character;
       set((state) => ({
         characters: { ...state.characters, [url]: data },
-        loading: { ...state.loading, [url]: false },
+        isLoading: false,
+        error: null,
       }));
       return data;
     } catch (e) {
-      set((state) => ({
-        error: {
-          ...state.error,
-          [url]: e instanceof Error ? e.message : "Unknown error",
-        },
-        loading: { ...state.loading, [url]: false },
-      }));
+      set({
+        error: e instanceof Error ? e.message : "Unknown error",
+        isLoading: false,
+      });
       return undefined;
     }
   },
-  async fetchMany(urls: string[]) {
-    const results = await Promise.all(urls.map(get().fetchCharacter));
+
+  fetchMany: async (urls: string[]) => {
+    set({ isLoading: true, error: null });
+    const promises = urls.map(get().fetchCharacter);
+    const results = await Promise.all(promises);
+    set({ isLoading: false });
     return results.filter(Boolean) as Character[];
   },
-  async fetchList(apiUrl: string) {
-    set((state) => ({
-      loading: { ...state.loading, [apiUrl]: true },
-      error: { ...state.error, [apiUrl]: null },
-    }));
+
+  fetchList: async (apiUrl: string) => {
+    set({ isLoading: true, error: null });
     try {
       const res = await fetch(apiUrl);
       if (!res.ok) throw new Error("Failed to fetch character list");
@@ -59,33 +70,22 @@ export const useCharactersStore = create<CharactersState>((set, get) => ({
         : Array.isArray(listData)
         ? listData
         : [];
-      const newChars: { [url: string]: Character } = {};
+      const charObj: { [url: string]: Character } = {};
       chars.forEach((char) => {
-        if (char.url) newChars[char.url] = char;
+        if (char.url) charObj[char.url] = char;
       });
       set((state) => ({
-        characters: { ...state.characters, ...newChars },
-        loading: { ...state.loading, [apiUrl]: false },
+        characters: { ...state.characters, ...charObj },
+        isLoading: false,
+        error: null,
       }));
       return chars;
     } catch (e) {
-      set((state) => ({
-        error: {
-          ...state.error,
-          [apiUrl]: e instanceof Error ? e.message : "Unknown error",
-        },
-        loading: { ...state.loading, [apiUrl]: false },
-      }));
+      set({
+        error: e instanceof Error ? e.message : "Unknown error",
+        isLoading: false,
+      });
       return [];
     }
-  },
-  setCharacters: (chars) => {
-    const charObj: { [url: string]: Character } = {};
-    chars.forEach((char) => {
-      if (char.url) charObj[char.url] = char;
-    });
-    set((state) => ({
-      characters: { ...state.characters, ...charObj },
-    }));
   },
 }));
