@@ -18,6 +18,7 @@ type PaginationControlsProps<T> = {
   itemsPerPage: number;
   renderPage: (paginated: T[]) => React.ReactNode;
   queryKey?: string;
+  onPageChange?: () => void;
 };
 
 export default function PaginationControls<T>({
@@ -25,6 +26,7 @@ export default function PaginationControls<T>({
   itemsPerPage,
   renderPage,
   queryKey = "page",
+  onPageChange,
 }: PaginationControlsProps<T>) {
   const router = useRouter();
   const {
@@ -35,6 +37,12 @@ export default function PaginationControls<T>({
     handlePrev,
     handleNext,
   } = usePagination(items, itemsPerPage, queryKey);
+
+  // page change handler
+  const goToPage = (i: number) => {
+    onPageChange?.();
+    router.push(buildHref(i), { scroll: false });
+  };
 
   const renderPageItems = () => {
     const pages: React.ReactNode[] = [];
@@ -59,7 +67,7 @@ export default function PaginationControls<T>({
               href={buildHref(i)}
               onClick={(e) => {
                 e.preventDefault();
-                router.push(buildHref(i), { scroll: false });
+                goToPage(i);
               }}
               isActive={currentPage === i}
               aria-current={currentPage === i ? "page" : undefined}
@@ -84,7 +92,10 @@ export default function PaginationControls<T>({
                 href={buildHref(currentPage - 1)}
                 onClick={(e) => {
                   e.preventDefault();
-                  handlePrev();
+                  if (currentPage > 1) {
+                    onPageChange?.();
+                    handlePrev();
+                  }
                 }}
                 aria-disabled={currentPage === 1}
                 tabIndex={currentPage === 1 ? -1 : undefined}
@@ -99,7 +110,10 @@ export default function PaginationControls<T>({
                 href={buildHref(currentPage + 1)}
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNext();
+                  if (currentPage < totalPages) {
+                    onPageChange?.();
+                    handleNext();
+                  }
                 }}
                 aria-disabled={currentPage === totalPages}
                 tabIndex={currentPage === totalPages ? -1 : undefined}
