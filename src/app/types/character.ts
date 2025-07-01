@@ -8,7 +8,7 @@ export interface Character {
   birth_year: string;
   gender: string;
   homeworld: string;
-  movies: string[];
+  films: string[];
   species: string[];
   vehicles: string[];
   starships: string[];
