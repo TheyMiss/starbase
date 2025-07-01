@@ -5,7 +5,7 @@ import { Skeleton } from "@/app/components/ui/skeleton";
 
 export const MovieDetailSkeleton = () => {
   return (
-    <main className="max-w-2xl mx-auto py-10">
+    <div className="max-w-2xl mx-auto py-10">
       <Card>
         <article>
           <CardContent className="py-8 space-y-4">
@@ -23,6 +23,6 @@ export const MovieDetailSkeleton = () => {
           </CardContent>
         </article>
       </Card>
-    </main>
+    </div>
   );
 };

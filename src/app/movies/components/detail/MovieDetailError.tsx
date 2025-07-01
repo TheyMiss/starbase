@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/app/components/ui/card";
 
 export const MovieDetailError = () => {
   return (
-    <main className="max-w-2xl mx-auto py-10">
+    <div className="max-w-2xl mx-auto py-10">
       <Card>
         <article>
           <CardContent className="py-8">
@@ -14,6 +14,6 @@ export const MovieDetailError = () => {
           </CardContent>
         </article>
       </Card>
-    </main>
+    </div>
   );
 };
