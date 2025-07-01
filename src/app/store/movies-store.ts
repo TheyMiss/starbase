@@ -18,7 +18,7 @@ interface MoviesState {
 export const useMoviesStore = create<MoviesState>((set, get) => ({
   movies: [],
   moviesById: {},
-  isLoading: false,
+  isLoading: true,
   error: null,
   setMovies: (movies) => set({ movies, isLoading: false }),
   setMovieById: (movie) => {
@@ -26,6 +26,7 @@ export const useMoviesStore = create<MoviesState>((set, get) => ({
     if (id != null) {
       set((state) => ({
         moviesById: { ...state.moviesById, [id]: movie },
+        isLoading: false,
       }));
     }
   },

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import MovieCard from "../components/MovieCard";
 import { useMoviesStore } from "@/app/store/movies-store";
 import { Movie } from "@/app/types/film";
-import { Skeleton } from "@/app/components/ui/skeleton";
+import { MovieCardSkeleton } from "./detail/MovieCardSkeleton";
 
 type Props = {
   movies: Movie[];
@@ -39,17 +39,7 @@ export default function ClientMoviesList({ movies, error }: Props) {
           aria-busy="true"
         >
           {Array.from({ length: 6 }).map((_, i) => (
-            <li
-              key={i}
-              className="h-full border-sb-primary border-2 bg-sb-background rounded-xl overflow-hidden"
-            >
-              <Skeleton className="h-64 w-full bg-sb-muted rounded-t-xl" />
-              <div className="space-y-3 p-6">
-                <Skeleton className="h-6 w-3/4 bg-sb-muted rounded" />
-                <Skeleton className="h-4 w-full bg-sb-muted rounded" />
-                <Skeleton className="h-4 w-1/2 bg-sb-muted rounded" />
-              </div>
-            </li>
+            <MovieCardSkeleton key={i} />
           ))}
         </ul>
       </section>

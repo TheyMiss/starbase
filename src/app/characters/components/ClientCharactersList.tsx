@@ -12,7 +12,7 @@ import {
 import CharacterCard from "./detail/CharacterCard";
 import SearchBar from "@/app/components/SearchBar";
 import { useCharactersStore } from "@/app/store/characters-store";
-import { Skeleton } from "@/app/components/ui/skeleton";
+import { CharacterCardSkeleton } from "./detail/CharacterCardSkeleton";
 
 type Props = {
   characters?: Character[];
@@ -26,7 +26,11 @@ export default function ClientCharactersList({
   itemsPerPage = 6,
 }: Props) {
   const [search, setSearch] = useState("");
-  const { characters: storeChars, setCharacters } = useCharactersStore();
+  const {
+    characters: storeChars,
+    setCharacters,
+    isLoading,
+  } = useCharactersStore();
 
   useEffect(() => {
     if (characters && characters.length > 0) {
@@ -41,8 +45,6 @@ export default function ClientCharactersList({
     if (term.length < 3) return allChars;
     return allChars.filter((c) => c.name.toLowerCase().includes(term));
   }, [allChars, search]);
-
-  const isLoading = !!characters && allChars.length === 0 && !error;
 
   return (
     <div className="flex flex-col items-center space-y-6 w-full">
@@ -67,16 +69,7 @@ export default function ClientCharactersList({
       ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           {Array.from({ length: itemsPerPage }).map((_, i) => (
-            <div
-              key={i}
-              className="border-sb-primary border-2 bg-sb-background rounded-xl overflow-hidden"
-            >
-              <Skeleton className="w-full h-64 bg-sb-muted" />
-              <div className="p-4 space-y-2">
-                <Skeleton className="h-6 w-3/4 bg-sb-muted" />
-                <Skeleton className="h-10 w-full bg-sb-muted" />
-              </div>
-            </div>
+            <CharacterCardSkeleton key={i} />
           ))}
         </div>
       ) : filteredCharacters.length === 0 ? (

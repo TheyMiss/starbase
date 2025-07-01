@@ -8,6 +8,7 @@ export type MovieHeaderProps = {
   director: string;
   producer: string;
   releaseDate: string;
+  isLoading?: boolean;
 };
 
 export function MovieHeader({
@@ -43,6 +44,7 @@ export function MovieHeader({
           </div>
         ))}
       </div>
+      )
     </header>
   );
 }
