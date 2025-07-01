@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { navLinks } from "../config/navLinks";
 
+const START_YEAR = 2025;
+
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+  const yearDisplay =
+    START_YEAR === currentYear
+      ? `${currentYear}`
+      : `${START_YEAR}–${currentYear}`;
+
   return (
     <footer className="w-full bg-black text-sb-muted-foreground py-6">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -20,7 +28,7 @@ export default function Footer() {
           </ul>
         </nav>
         <p className="mt-6 text-center text-xs text-sb-secondary-foreground">
-          &copy; {new Date().getFullYear()} Starbase. All rights reserved.
+          &copy; {yearDisplay} Starbase. All rights reserved.
         </p>
       </div>
     </footer>
