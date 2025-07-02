@@ -1,3 +1,5 @@
+// Updated SearchBar.tsx with derived loading state
+
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -5,6 +7,7 @@ import { useSearchParams, usePathname } from "next/navigation";
 import { Input } from "@/app/components/ui/input";
 import { Search as SearchIcon } from "lucide-react";
 import Loader from "./Loader";
+import { useDebounce } from "../hooks/useDebounce";
 
 export type SearchBarProps = {
   placeholder?: string;
@@ -26,35 +29,16 @@ export default function SearchBar({
 
   const initial = searchParams.get(queryParam) ?? defaultValue;
   const [input, setInput] = useState(initial);
-  const [isLoading, setIsLoading] = useState(false);
+  const debouncedInput = useDebounce(input, debounce);
   const [showWarning, setShowWarning] = useState(false);
   const warningTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // Sync URL params when input changes
   useEffect(() => {
-    const updated = searchParams.get(queryParam) ?? defaultValue;
-    setInput(updated);
-    setIsLoading(false);
-    setShowWarning(false);
-    if (warningTimer.current) {
-      clearTimeout(warningTimer.current);
-      warningTimer.current = null;
-    }
-  }, [defaultValue, searchParams, queryParam]);
-
-  useEffect(() => {
-    if (warningTimer.current) {
-      clearTimeout(warningTimer.current);
-      warningTimer.current = null;
-    }
-
-    const trimmed = input.trim();
     const params = new URLSearchParams(searchParams.toString());
-
-    if (trimmed.length > 0) {
-      params.set(queryParam, trimmed);
-    } else {
-      params.delete(queryParam);
-    }
+    const trimmed = input.trim();
+    if (trimmed) params.set(queryParam, trimmed);
+    else params.delete(queryParam);
 
     if (typeof window !== "undefined") {
       const url = `${pathname}${
@@ -62,32 +46,28 @@ export default function SearchBar({
       }`;
       window.history.replaceState(null, "", url);
     }
+  }, [input, pathname, queryParam, searchParams]);
+
+  // Trigger search on debounced input
+  useEffect(() => {
+    const trimmed = debouncedInput.trim();
+
+    // clear any pending warning
+    if (warningTimer.current) {
+      clearTimeout(warningTimer.current);
+      warningTimer.current = null;
+    }
 
     if (trimmed.length < 3) {
       onSearch("");
-      setIsLoading(false);
-
       if (trimmed.length > 0) {
         warningTimer.current = setTimeout(() => setShowWarning(true), 2000);
       }
-
-      return;
-    }
-
-    setShowWarning(false);
-    setIsLoading(true);
-    const timer = setTimeout(() => {
+    } else {
+      setShowWarning(false);
       onSearch(trimmed);
-      setIsLoading(false);
-    }, debounce);
-
-    return () => {
-      clearTimeout(timer);
-      if (warningTimer.current) {
-        clearTimeout(warningTimer.current);
-      }
-    };
-  }, [input, debounce, onSearch, queryParam, searchParams, pathname]);
+    }
+  }, [debouncedInput, onSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && input.trim().length < 3) {
@@ -96,6 +76,7 @@ export default function SearchBar({
   };
 
   const trimmedLen = input.trim().length;
+  const isLoading = trimmedLen >= 3 && input !== debouncedInput;
 
   return (
     <div className="flex flex-col items-center w-full max-w-md">
