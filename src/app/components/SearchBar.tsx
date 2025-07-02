@@ -35,7 +35,10 @@ export default function SearchBar({
     setInput(updated);
     setIsLoading(false);
     setShowWarning(false);
-    if (warningTimer.current) clearTimeout(warningTimer.current);
+    if (warningTimer.current) {
+      clearTimeout(warningTimer.current);
+      warningTimer.current = null;
+    }
   }, [defaultValue, searchParams, queryParam]);
 
   useEffect(() => {
@@ -43,33 +46,36 @@ export default function SearchBar({
       clearTimeout(warningTimer.current);
       warningTimer.current = null;
     }
+
     const trimmed = input.trim();
     const params = new URLSearchParams(searchParams.toString());
+
+    if (trimmed.length > 0) {
+      params.set(queryParam, trimmed);
+    } else {
+      params.delete(queryParam);
+    }
+
+    if (typeof window !== "undefined") {
+      const url = `${pathname}${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
+      window.history.replaceState(null, "", url);
+    }
 
     if (trimmed.length < 3) {
       onSearch("");
       setIsLoading(false);
-      params.delete(queryParam);
-      if (typeof window !== "undefined") {
-        const url = `${pathname}${
-          params.toString() ? `?${params.toString()}` : ""
-        }`;
-        window.history.replaceState(null, "", url);
-      }
+
       if (trimmed.length > 0) {
         warningTimer.current = setTimeout(() => setShowWarning(true), 2000);
       }
+
       return;
     }
 
     setShowWarning(false);
     setIsLoading(true);
-    params.set(queryParam, trimmed);
-    if (typeof window !== "undefined") {
-      const url = `${pathname}?${params.toString()}`;
-      window.history.replaceState(null, "", url);
-    }
-
     const timer = setTimeout(() => {
       onSearch(trimmed);
       setIsLoading(false);
@@ -77,7 +83,9 @@ export default function SearchBar({
 
     return () => {
       clearTimeout(timer);
-      if (warningTimer.current) clearTimeout(warningTimer.current);
+      if (warningTimer.current) {
+        clearTimeout(warningTimer.current);
+      }
     };
   }, [input, debounce, onSearch, queryParam, searchParams, pathname]);
 
@@ -107,7 +115,6 @@ export default function SearchBar({
           className="w-full pl-10 pr-10 bg-white border border-sb-muted rounded-lg focus:border-sb-accent focus:ring sb-focus:ring-accent transition"
           autoComplete="off"
         />
-
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
           {isLoading && <Loader className="w-6 h-6" />}
         </div>

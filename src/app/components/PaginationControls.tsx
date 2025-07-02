@@ -38,7 +38,6 @@ export default function PaginationControls<T>({
     handleNext,
   } = usePagination(items, itemsPerPage, queryKey);
 
-  // page change handler
   const goToPage = (i: number) => {
     onPageChange?.();
     router.push(buildHref(i), { scroll: false });
@@ -81,52 +80,63 @@ export default function PaginationControls<T>({
     return pages;
   };
 
+  if (items.length === 0) {
+    return (
+      <div className="w-full text-center py-8 text-gray-500">
+        No characters to display.
+      </div>
+    );
+  }
+
   return (
     <>
       {renderPage(paginated)}
-      <div className="flex justify-center mt-8 text-white">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href={buildHref(currentPage - 1)}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) {
-                    onPageChange?.();
-                    handlePrev();
+
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-8 text-white">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={buildHref(currentPage - 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                      onPageChange?.();
+                      handlePrev();
+                    }
+                  }}
+                  aria-disabled={currentPage === 1}
+                  tabIndex={currentPage === 1 ? -1 : undefined}
+                  className={
+                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
                   }
-                }}
-                aria-disabled={currentPage === 1}
-                tabIndex={currentPage === 1 ? -1 : undefined}
-                className={
-                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                }
-              />
-            </PaginationItem>
-            {renderPageItems()}
-            <PaginationItem>
-              <PaginationNext
-                href={buildHref(currentPage + 1)}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) {
-                    onPageChange?.();
-                    handleNext();
+                />
+              </PaginationItem>
+              {renderPageItems()}
+              <PaginationItem>
+                <PaginationNext
+                  href={buildHref(currentPage + 1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < totalPages) {
+                      onPageChange?.();
+                      handleNext();
+                    }
+                  }}
+                  aria-disabled={currentPage === totalPages}
+                  tabIndex={currentPage === totalPages ? -1 : undefined}
+                  className={
+                    currentPage === totalPages
+                      ? "pointer-events-none opacity-50"
+                      : ""
                   }
-                }}
-                aria-disabled={currentPage === totalPages}
-                tabIndex={currentPage === totalPages ? -1 : undefined}
-                className={
-                  currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </>
   );
 }

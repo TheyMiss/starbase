@@ -65,15 +65,25 @@ export default function ClientCharactersList({
           itemsPerPage={itemsPerPage}
           onPageChange={() => {
             setIsPaginating(true);
-            setTimeout(() => setIsPaginating(false), 400); // always show at least 400ms
+            setTimeout(() => setIsPaginating(false), 400);
           }}
-          renderPage={(page) => (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-              {page.map((character) => (
-                <CharacterCard key={character.url} character={character} />
-              ))}
-            </div>
-          )}
+          renderPage={(page) => {
+            if (page.length === 0) {
+              return (
+                <div className="w-full text-center py-8 text-gray-500">
+                  No characters to display.
+                </div>
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+                {page.map((character) => (
+                  <CharacterCard key={character.url} character={character} />
+                ))}
+              </div>
+            );
+          }}
         />
       )}
     </div>
